@@ -1,0 +1,2609 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UNO Eksponen — Sifat-Sifat Bilangan Berpangkat</title>
+  <style>
+    :root {
+      --bg: #eef4ff;
+      --panel: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #d7dfec;
+      --primary: #315efb;
+      --primary-dark: #2448c8;
+      --success: #16884a;
+      --danger: #d92d20;
+      --warning: #c77a00;
+      --shadow: 0 18px 45px rgba(34, 49, 84, 0.14);
+      --red: #e53935;
+      --yellow: #f7c948;
+      --green: #22a447;
+      --blue: #2474e5;
+      --wild: #242938;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(49, 94, 251, .14), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(34, 164, 71, .12), transparent 30%),
+        var(--bg);
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .55; }
+
+    .hidden { display: none !important; }
+
+    .app-shell {
+      width: min(1180px, calc(100% - 24px));
+      margin: 0 auto;
+      padding: 18px 0 30px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 900;
+      letter-spacing: -2px;
+      transform: rotate(-5deg);
+      background: linear-gradient(135deg, var(--red) 0 25%, var(--yellow) 25% 50%, var(--green) 50% 75%, var(--blue) 75%);
+      box-shadow: 0 10px 22px rgba(49, 94, 251, .22);
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin-bottom: 2px; font-size: clamp(1.35rem, 3vw, 2rem); }
+    .subtitle { margin: 0; color: var(--muted); font-size: .95rem; }
+
+    .panel {
+      background: rgba(255, 255, 255, .96);
+      border: 1px solid rgba(215, 223, 236, .85);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .setup-panel {
+      max-width: 850px;
+      margin: 30px auto 0;
+      padding: clamp(20px, 4vw, 38px);
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0 24px;
+    }
+
+    .mode-card {
+      padding: 18px;
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      background: white;
+      text-align: left;
+      transition: .18s ease;
+    }
+
+    .mode-card:hover { transform: translateY(-2px); border-color: #9eb2ff; }
+    .mode-card.active {
+      border-color: var(--primary);
+      background: #f3f6ff;
+      box-shadow: 0 0 0 4px rgba(49, 94, 251, .09);
+    }
+    .mode-card strong { display: block; font-size: 1.06rem; margin-bottom: 4px; }
+    .mode-card span { color: var(--muted); font-size: .9rem; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 700;
+      font-size: .88rem;
+      margin-bottom: 7px;
+    }
+
+    .field input, .field select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: 12px;
+      padding: 11px 12px;
+      outline: none;
+    }
+
+    .field input:focus, .field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(49, 94, 251, .1);
+    }
+
+    .names-box {
+      margin-top: 18px;
+      border-top: 1px dashed var(--line);
+      padding-top: 18px;
+    }
+
+    .names-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .primary-btn, .secondary-btn, .danger-btn {
+      border: 0;
+      border-radius: 13px;
+      padding: 11px 16px;
+      font-weight: 800;
+      transition: .16s ease;
+    }
+
+    .primary-btn {
+      color: white;
+      background: var(--primary);
+      box-shadow: 0 8px 16px rgba(49, 94, 251, .22);
+    }
+    .primary-btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .secondary-btn { color: var(--text); background: #edf1f8; }
+    .secondary-btn:hover { background: #e2e8f2; }
+    .danger-btn { color: white; background: var(--danger); }
+
+    .setup-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+
+    .game-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 290px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .main-board { padding: 16px; }
+    .side-panel { padding: 16px; position: sticky; top: 12px; }
+
+    .players-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .player-chip {
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      padding: 10px 12px;
+      background: #f9fbff;
+      min-width: 0;
+    }
+
+    .player-chip.active {
+      border-color: var(--primary);
+      background: #eef3ff;
+      box-shadow: inset 0 0 0 1px var(--primary);
+    }
+
+    .player-chip.winner {
+      border-color: var(--success);
+      background: #edf9f2;
+    }
+
+    .player-name {
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .player-count { font-size: .84rem; color: var(--muted); margin-top: 2px; }
+
+    .table-zone {
+      min-height: 310px;
+      display: grid;
+      place-items: center;
+      border-radius: 22px;
+      padding: 20px;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.16), transparent 42%),
+        linear-gradient(145deg, #145a38, #0c3f28);
+      border: 7px solid #7a4d28;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.12);
+    }
+
+    .table-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(20px, 6vw, 70px);
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    .pile-wrap { text-align: center; }
+    .pile-label { color: rgba(255,255,255,.88); font-weight: 800; margin-top: 8px; font-size: .86rem; }
+
+    .uno-card {
+      width: 92px;
+      aspect-ratio: 2 / 3;
+      border-radius: 14px;
+      border: 4px solid white;
+      box-shadow: 0 8px 14px rgba(0,0,0,.25);
+      color: white;
+      position: relative;
+      display: grid;
+      place-items: center;
+      user-select: none;
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+
+    .uno-card::after {
+      content: "";
+      position: absolute;
+      width: 74%;
+      height: 56%;
+      border-radius: 50%;
+      background: rgba(255,255,255,.92);
+      transform: rotate(-28deg);
+    }
+
+    .uno-card .corner {
+      position: absolute;
+      z-index: 2;
+      font-size: .78rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .uno-card .corner.top { top: 7px; left: 7px; }
+    .uno-card .corner.bottom { bottom: 7px; right: 7px; transform: rotate(180deg); }
+    .uno-card .symbol {
+      position: relative;
+      z-index: 3;
+      color: #1d2433;
+      font-size: 1.75rem;
+      font-weight: 1000;
+      transform: rotate(-6deg);
+      text-align: center;
+      line-height: .92;
+    }
+
+    .uno-card.red { background: var(--red); }
+    .uno-card.yellow { background: var(--yellow); color: #202020; }
+    .uno-card.green { background: var(--green); }
+    .uno-card.blue { background: var(--blue); }
+    .uno-card.wild {
+      background: conic-gradient(var(--red) 0 25%, var(--yellow) 25% 50%, var(--green) 50% 75%, var(--blue) 75%);
+    }
+    .uno-card.back {
+      background:
+        repeating-linear-gradient(45deg, #1a2340 0 10px, #2f3a63 10px 20px);
+    }
+    .uno-card.back::after { background: var(--red); border: 3px solid #fff; }
+    .uno-card.back .symbol { color: white; font-size: 1.2rem; letter-spacing: -1px; }
+
+    .draw-pile {
+      border: 0;
+      padding: 0;
+      background: transparent;
+      border-radius: 14px;
+    }
+    .draw-pile:hover .uno-card { transform: translateY(-4px) rotate(-1deg); }
+
+    .current-color {
+      margin-top: 10px;
+      color: white;
+      font-size: .82rem;
+      font-weight: 800;
+    }
+
+    .turn-box {
+      margin: 15px 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .turn-title { font-size: 1.05rem; font-weight: 900; }
+    .turn-help { font-size: .84rem; color: var(--muted); }
+
+    .hand {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      overflow-x: auto;
+      padding: 10px 4px 18px;
+      min-height: 165px;
+      scroll-snap-type: x proximity;
+    }
+
+    .hand-card {
+      border: 0;
+      padding: 0;
+      background: none;
+      border-radius: 14px;
+      scroll-snap-align: center;
+      transition: transform .15s ease, filter .15s ease;
+    }
+    .hand-card .uno-card { width: 78px; }
+    .hand-card:hover:not(:disabled) { transform: translateY(-10px); }
+    .hand-card.playable .uno-card { box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--primary), 0 10px 16px rgba(0,0,0,.2); }
+    .hand-card:not(.playable) { filter: grayscale(.25) brightness(.82); }
+
+    .game-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .uno-btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 20px;
+      color: white;
+      background: var(--danger);
+      font-weight: 1000;
+      letter-spacing: .8px;
+      box-shadow: 0 8px 16px rgba(217,45,32,.24);
+    }
+    .uno-btn.called { background: var(--success); }
+
+    .stat-list { display: grid; gap: 10px; }
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px solid #edf0f5;
+      padding-bottom: 9px;
+      font-size: .9rem;
+    }
+    .stat span { color: var(--muted); }
+    .stat strong { text-align: right; }
+
+    .rule-box {
+      margin-top: 16px;
+      padding: 13px;
+      border-radius: 14px;
+      background: #f4f7fc;
+      font-size: .84rem;
+      color: #475467;
+      line-height: 1.5;
+    }
+
+    .formula-guide {
+      margin-top: 12px;
+      display: grid;
+      gap: 7px;
+    }
+
+    .formula-row {
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #ffffff;
+      border: 1px solid #e5eaf2;
+      color: #24304a;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: .94rem;
+      text-align: center;
+    }
+
+    .log {
+      margin-top: 14px;
+      max-height: 210px;
+      overflow-y: auto;
+      display: grid;
+      gap: 7px;
+    }
+    .log-item {
+      border-left: 3px solid #aebbd4;
+      padding: 6px 0 6px 9px;
+      font-size: .82rem;
+      color: #475467;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      background: rgba(12, 18, 32, .72);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal {
+      width: min(680px, 100%);
+      max-height: calc(100vh - 32px);
+      overflow-y: auto;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 24px 70px rgba(0,0,0,.3);
+      padding: clamp(18px, 4vw, 30px);
+    }
+
+    .pass-modal { width: min(470px, 100%); text-align: center; }
+    .pass-icon { font-size: 3rem; margin-bottom: 8px; }
+    .pass-name { color: var(--primary); font-size: 1.45rem; font-weight: 1000; }
+    .pass-note { color: var(--muted); line-height: 1.5; }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .topic-badge {
+      background: #edf2ff;
+      color: var(--primary-dark);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: .82rem;
+    }
+
+    .timer {
+      min-width: 72px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f2f4f7;
+      font-weight: 1000;
+      text-align: center;
+    }
+    .timer.danger { background: #fff0ee; color: var(--danger); }
+
+    .question-text {
+      font-size: 1.06rem;
+      font-weight: 800;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .math-note {
+      display: inline-block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: .88rem;
+      font-weight: 600;
+    }
+
+    .visual-box {
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: #fbfcff;
+      border-radius: 16px;
+      padding: 8px;
+      margin-bottom: 14px;
+    }
+    .visual-box svg { width: min(100%, 360px); height: auto; display: block; }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .option-btn {
+      border: 2px solid var(--line);
+      background: white;
+      border-radius: 14px;
+      min-height: 52px;
+      padding: 10px 12px;
+      font-weight: 800;
+      color: var(--text);
+      display: grid;
+      place-items: center;
+    }
+    .option-btn mjx-container {
+      margin: 0 !important;
+      font-size: 112% !important;
+    }
+    .question-text mjx-container {
+      font-size: 112% !important;
+    }
+    .option-btn:hover { border-color: var(--primary); background: #f5f7ff; }
+    .option-btn.correct-answer {
+      border-color: var(--success);
+      background: #eaf8f0;
+      color: #126b3b;
+      box-shadow: inset 0 0 0 1px var(--success);
+    }
+    .option-btn.wrong-answer {
+      border-color: var(--danger);
+      background: #fff0ee;
+      color: #a92218;
+      box-shadow: inset 0 0 0 1px var(--danger);
+    }
+
+    .hidden-hand-message {
+      width: 100%;
+      min-height: 125px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border: 2px dashed var(--line);
+      border-radius: 18px;
+      background: #f7f9fc;
+      color: var(--muted);
+      font-weight: 800;
+      padding: 20px;
+    }
+
+    .feedback {
+      margin-top: 14px;
+      border-radius: 14px;
+      padding: 13px;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+    .feedback.correct { background: #eaf8f0; color: #126b3b; }
+    .feedback.wrong { background: #fff0ee; color: #a92218; }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .color-btn {
+      border: 4px solid white;
+      outline: 2px solid #d8deea;
+      min-height: 82px;
+      border-radius: 16px;
+      font-size: 0;
+      color: transparent;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
+      transition: transform .15s ease, box-shadow .15s ease, outline-color .15s ease;
+    }
+    .color-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.55), 0 10px 18px rgba(0,0,0,.12);
+      outline-color: #9eb2ff;
+    }
+    .color-btn.red { background: var(--red); }
+    .color-btn.yellow { background: var(--yellow); }
+    .color-btn.green { background: var(--green); }
+    .color-btn.blue { background: var(--blue); }
+
+    .winner-modal { text-align: center; }
+    .trophy { font-size: 4.5rem; }
+    .ranking-list {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0;
+      text-align: left;
+    }
+    .ranking-item {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #f8faff;
+    }
+    .ranking-item:first-child {
+      border-color: #e1b735;
+      background: #fff9df;
+      box-shadow: 0 0 0 3px rgba(225, 183, 53, .12);
+    }
+    .ranking-position {
+      font-size: 1.25rem;
+      font-weight: 1000;
+      text-align: center;
+    }
+    .ranking-player {
+      min-width: 0;
+      font-weight: 900;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .ranking-label {
+      color: var(--muted);
+      font-size: .84rem;
+      font-weight: 800;
+    }
+
+    @media (max-width: 860px) {
+      .game-layout { grid-template-columns: 1fr; }
+      .side-panel { position: static; }
+      .form-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .app-shell { width: min(100% - 12px, 1180px); padding-top: 8px; }
+      .brand { align-items: flex-start; }
+      .brand .secondary-btn { padding: 9px 11px; font-size: .82rem; }
+      .logo { width: 44px; height: 44px; }
+      .mode-grid, .names-grid, .form-grid, .options { grid-template-columns: 1fr; }
+      .setup-panel { margin-top: 12px; border-radius: 18px; }
+      .main-board, .side-panel { padding: 11px; }
+      .table-zone { min-height: 270px; padding: 14px; }
+      .uno-card { width: 78px; }
+      .hand-card .uno-card { width: 68px; }
+      .hand { min-height: 145px; }
+      .game-actions > * { flex: 1; }
+    }
+  </style>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["\\(", "\\)"], ["$", "$"]],
+        displayMath: [["\\[", "\\]"]]
+      },
+      svg: { fontCache: "global" }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="brand">
+      <div class="brand-title">
+        <div class="logo">UNO</div>
+        <div>
+          <h1>UNO Eksponen</h1>
+          
+        </div>
+      </div>
+      <button id="newGameTop" class="secondary-btn hidden" type="button">Permainan Baru</button>
+    </header>
+
+    <section id="setupScreen" class="panel setup-panel">
+      <h2>Atur Permainan</h2>
+      <p class="subtitle">Pilih mode, jumlah pemain, tingkat kesulitan eksponen, dan durasi menjawab.</p>
+
+      <div class="mode-grid">
+        <button class="mode-card active" data-mode="versus" type="button">
+          <strong>⚔️ Mode Versus</strong>
+          <span>2 pemain bergantian pada satu perangkat.</span>
+        </button>
+        <button class="mode-card" data-mode="multiplayer" type="button">
+          <strong>👥 Mode Multiplayer</strong>
+          <span>3–6 pemain dengan sistem oper perangkat.</span>
+        </button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="playerCount">Jumlah pemain</label>
+          <select id="playerCount">
+            <option value="2">2 pemain</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="difficulty">Tingkat kesulitan</label>
+          <select id="difficulty">
+            <option value="easy">Mudah</option>
+            <option value="medium" selected>Sedang</option>
+            <option value="hard">Sulit</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="timeLimit">Waktu per soal</label>
+          <select id="timeLimit">
+            <option value="60" selected>60 detik</option>
+            <option value="90">90 detik</option>
+            <option value="120">120 detik</option>
+            <option value="180">180 detik</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="initialCards">Kartu awal per pemain</label>
+          <select id="initialCards">
+            <option value="3">3 kartu</option>
+            <option value="4">4 kartu</option>
+            <option value="5">5 kartu</option>
+            <option value="6">6 kartu</option>
+            <option value="7" selected>7 kartu</option>
+            <option value="8">8 kartu</option>
+            <option value="9">9 kartu</option>
+            <option value="10">10 kartu</option>
+            <option value="11">11 kartu</option>
+            <option value="12">12 kartu</option>
+            <option value="13">13 kartu</option>
+            <option value="14">14 kartu</option>
+            <option value="15">15 kartu</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="names-box">
+        <h3>Nama pemain</h3>
+        <div id="namesGrid" class="names-grid"></div>
+      </div>
+
+      <div class="setup-actions">
+        <button id="startGameBtn" class="primary-btn" type="button">Mulai Permainan</button>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="hidden">
+      <div class="game-layout">
+        <main class="panel main-board">
+          <div id="playersRow" class="players-row"></div>
+
+          <div class="table-zone">
+            <div class="table-content">
+              <div class="pile-wrap">
+                <button id="drawPileBtn" class="draw-pile" type="button" aria-label="Ambil satu kartu">
+                  <div class="uno-card back">
+                    <span class="symbol">UNO</span>
+                  </div>
+                </button>
+                <div class="pile-label">Ambil kartu</div>
+                <div id="deckCount" class="current-color"></div>
+              </div>
+
+              <div class="pile-wrap">
+                <div id="discardCard"></div>
+                <div class="pile-label">Kartu meja</div>
+                <div id="currentColorText" class="current-color"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="turn-box">
+            <div>
+              <div id="turnTitle" class="turn-title"></div>
+              <div id="turnHelp" class="turn-help">Pilih kartu yang warna atau simbolnya sama.</div>
+            </div>
+          </div>
+
+          <div id="hand" class="hand" aria-live="polite"></div>
+
+          <div class="game-actions">
+            <button id="unoBtn" class="uno-btn" type="button">UNO!</button>
+            <button id="hideHandBtn" class="secondary-btn" type="button">🙈 Sembunyikan Kartu</button>
+            <button id="drawCardBtn" class="secondary-btn" type="button">Ambil 1 Kartu</button>
+          </div>
+        </main>
+
+        <aside class="panel side-panel">
+          <h3>Informasi Permainan</h3>
+          <div class="stat-list">
+            <div class="stat"><span>Mode</span><strong id="modeStat"></strong></div>
+            <div class="stat"><span>Materi</span><strong>Sifat-Sifat Bilangan Berpangkat</strong></div>
+            <div class="stat"><span>Kesulitan</span><strong id="difficultyStat"></strong></div>
+            <div class="stat"><span>Waktu soal</span><strong id="timeStat"></strong></div>
+            <div class="stat"><span>Kartu awal</span><strong id="initialCardsStat"></strong></div>
+            <div class="stat"><span>Arah bermain</span><strong id="directionStat"></strong></div>
+          </div>
+
+          <div class="rule-box">
+            <strong>Aturan belajar:</strong><br>
+            Kartu angka harus dikonfirmasi dengan menjawab soal eksponen. Kartu aksi langsung dimainkan tanpa soal. Kartu + dapat ditumpuk dan diakumulasikan.
+            <div class="formula-guide" aria-label="Ringkasan sifat bilangan berpangkat">
+              <div class="formula-row">a<sup>m</sup> × a<sup>n</sup> = a<sup>m+n</sup></div>
+              <div class="formula-row">a<sup>m</sup> ÷ a<sup>n</sup> = a<sup>m−n</sup></div>
+              <div class="formula-row">(a<sup>m</sup>)<sup>n</sup> = a<sup>mn</sup></div>
+              <div class="formula-row">(ab)<sup>m</sup> = a<sup>m</sup>b<sup>m</sup></div>
+              <div class="formula-row">a<sup>0</sup> = 1 &nbsp; dan &nbsp; a<sup>−n</sup> = 1/a<sup>n</sup></div>
+            </div>
+          </div>
+
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <div id="passOverlay" class="overlay hidden">
+    <div class="modal pass-modal">
+      <div class="pass-icon">🙈</div>
+      <h2>Oper perangkat</h2>
+      <p id="passStatus" class="pass-note hidden"></p>
+      <p class="pass-note">Pastikan pemain lain tidak melihat kartu. Sekarang giliran:</p>
+      <div id="passPlayerName" class="pass-name"></div>
+      <p class="pass-note">Tekan tombol saat pemain sudah siap.</p>
+      <button id="readyBtn" class="primary-btn" type="button">Saya Siap</button>
+    </div>
+  </div>
+
+  <div id="questionOverlay" class="overlay hidden">
+    <div class="modal">
+      <div class="question-header">
+        <span id="questionTopic" class="topic-badge"></span>
+        <span id="questionTimer" class="timer">60 detik</span>
+      </div>
+      <div id="questionText" class="question-text"></div>
+      <div id="questionVisual" class="visual-box"></div>
+      <div id="questionOptions" class="options"></div>
+      <div id="questionFeedback" class="feedback hidden" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div id="colorOverlay" class="overlay hidden">
+    <div class="modal pass-modal">
+      <h2>Pilih warna berikutnya</h2>
+      <p class="pass-note">Kartu Wild dapat mengubah warna aktif.</p>
+      <div class="color-grid">
+        <button class="color-btn red" data-color="red" type="button" aria-label="Merah" title="Merah"></button>
+        <button class="color-btn yellow" data-color="yellow" type="button" aria-label="Kuning" title="Kuning"></button>
+        <button class="color-btn green" data-color="green" type="button" aria-label="Hijau" title="Hijau"></button>
+        <button class="color-btn blue" data-color="blue" type="button" aria-label="Biru" title="Biru"></button>
+      </div>
+    </div>
+  </div>
+
+  <div id="winnerOverlay" class="overlay hidden">
+    <div class="modal winner-modal">
+      <div class="trophy">🏆</div>
+      <h2>Peringkat Akhir</h2>
+      <p class="subtitle">Urutan pemain berdasarkan siapa yang lebih dahulu menghabiskan kartu.</p>
+      <div id="winnerName" class="ranking-list"></div>
+      <p id="winnerSummary" class="pass-note"></p>
+      <button id="playAgainBtn" class="primary-btn" type="button">Main Lagi</button>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const COLORS = ["red", "yellow", "green", "blue"];
+      const COLOR_NAMES = { red: "Merah", yellow: "Kuning", green: "Hijau", blue: "Biru", wild: "Bebas" };
+      const ACTION_LABELS = { skip: "⊘", reverse: "↺", draw2: "+2", wild: "W", wild4: "+4" };
+      const DIFFICULTY_NAMES = { easy: "Mudah", medium: "Sedang", hard: "Sulit" };
+
+      const state = {
+        mode: "versus",
+        difficulty: "medium",
+        timeLimit: 60,
+        initialCards: 7,
+        players: [],
+        deck: [],
+        discard: [],
+        current: 0,
+        direction: 1,
+        currentColor: "red",
+        pendingDraw: 0,
+        unoCalled: false,
+        awaitingPass: false,
+        handHidden: false,
+        pendingCardIndex: null,
+        pendingCard: null,
+        question: null,
+        timerId: null,
+        timeLeft: 0,
+        gameOver: false,
+        rankings: [],
+        stats: { questions: 0, correct: 0 }
+      };
+
+      const el = {
+        setupScreen: document.getElementById("setupScreen"),
+        gameScreen: document.getElementById("gameScreen"),
+        modeCards: [...document.querySelectorAll(".mode-card")],
+        playerCount: document.getElementById("playerCount"),
+        difficulty: document.getElementById("difficulty"),
+        timeLimit: document.getElementById("timeLimit"),
+        initialCards: document.getElementById("initialCards"),
+        namesGrid: document.getElementById("namesGrid"),
+        startGameBtn: document.getElementById("startGameBtn"),
+        newGameTop: document.getElementById("newGameTop"),
+        playersRow: document.getElementById("playersRow"),
+        discardCard: document.getElementById("discardCard"),
+        currentColorText: document.getElementById("currentColorText"),
+        deckCount: document.getElementById("deckCount"),
+        turnTitle: document.getElementById("turnTitle"),
+        turnHelp: document.getElementById("turnHelp"),
+        hand: document.getElementById("hand"),
+        unoBtn: document.getElementById("unoBtn"),
+        hideHandBtn: document.getElementById("hideHandBtn"),
+        drawCardBtn: document.getElementById("drawCardBtn"),
+        drawPileBtn: document.getElementById("drawPileBtn"),
+        modeStat: document.getElementById("modeStat"),
+        difficultyStat: document.getElementById("difficultyStat"),
+        timeStat: document.getElementById("timeStat"),
+        initialCardsStat: document.getElementById("initialCardsStat"),
+        directionStat: document.getElementById("directionStat"),
+        passOverlay: document.getElementById("passOverlay"),
+        passStatus: document.getElementById("passStatus"),
+        passPlayerName: document.getElementById("passPlayerName"),
+        readyBtn: document.getElementById("readyBtn"),
+        questionOverlay: document.getElementById("questionOverlay"),
+        questionTopic: document.getElementById("questionTopic"),
+        questionTimer: document.getElementById("questionTimer"),
+        questionText: document.getElementById("questionText"),
+        questionVisual: document.getElementById("questionVisual"),
+        questionOptions: document.getElementById("questionOptions"),
+        questionFeedback: document.getElementById("questionFeedback"),
+        colorOverlay: document.getElementById("colorOverlay"),
+        colorBtns: [...document.querySelectorAll(".color-btn")],
+        winnerOverlay: document.getElementById("winnerOverlay"),
+        winnerName: document.getElementById("winnerName"),
+        winnerSummary: document.getElementById("winnerSummary"),
+        playAgainBtn: document.getElementById("playAgainBtn")
+      };
+
+      function randInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function choose(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      function shuffle(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
+
+      function coord(x, y) {
+        return `(${x}, ${y})`;
+      }
+
+      function vector(a, b) {
+        return `T(${a}, ${b})`;
+      }
+
+      function uniqueOptions(correct, candidates) {
+        const values = [correct];
+        for (const item of shuffle(candidates)) {
+          if (!values.includes(item)) values.push(item);
+          if (values.length === 4) break;
+        }
+        while (values.length < 4) {
+          const fallback = `(${randInt(-8, 8)}, ${randInt(-8, 8)})`;
+          if (!values.includes(fallback)) values.push(fallback);
+        }
+        return shuffle(values);
+      }
+
+      function uniqueTextOptions(correct, candidates, fallbackFactory) {
+        const values = [correct];
+
+        for (const item of shuffle(candidates)) {
+          if (!values.includes(item)) values.push(item);
+          if (values.length === 4) break;
+        }
+
+        let guard = 0;
+        while (values.length < 4 && guard < 100) {
+          const fallback = fallbackFactory();
+          if (!values.includes(fallback)) values.push(fallback);
+          guard += 1;
+        }
+
+        return shuffle(values);
+      }
+
+      function formatLineEquation(m, b) {
+        let expression;
+
+        if (m === 0) {
+          expression = String(b);
+        } else if (m === 1) {
+          expression = "x";
+        } else if (m === -1) {
+          expression = "−x";
+        } else {
+          expression = `${m}x`;
+        }
+
+        if (m !== 0 && b > 0) expression += ` + ${b}`;
+        if (m !== 0 && b < 0) expression += ` − ${Math.abs(b)}`;
+
+        return `y = ${expression}`;
+      }
+
+      function gcdInteger(a, b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+
+        while (b !== 0) {
+          const remainder = a % b;
+          a = b;
+          b = remainder;
+        }
+
+        return a;
+      }
+
+      function normalizeStandardLine(A, B, C) {
+        let divisor = gcdInteger(gcdInteger(A, B), C);
+        if (divisor === 0) divisor = 1;
+
+        A /= divisor;
+        B /= divisor;
+        C /= divisor;
+
+        if (A < 0 || (A === 0 && B < 0)) {
+          A *= -1;
+          B *= -1;
+          C *= -1;
+        }
+
+        return { A, B, C };
+      }
+
+      function formatStandardLine(A, B, C) {
+        const normalized = normalizeStandardLine(A, B, C);
+        const coefficients = [
+          { value: normalized.A, variable: "x" },
+          { value: normalized.B, variable: "y" },
+          { value: normalized.C, variable: "" }
+        ];
+
+        let expression = "";
+
+        coefficients.forEach(({ value, variable }) => {
+          if (value === 0) return;
+
+          const absolute = Math.abs(value);
+          const coefficientText = variable && absolute === 1 ? "" : String(absolute);
+          const term = `${coefficientText}${variable}`;
+
+          if (!expression) {
+            expression = value < 0 ? `−${term}` : term;
+          } else {
+            expression += value < 0 ? ` − ${term}` : ` + ${term}`;
+          }
+        });
+
+        return `${expression || "0"} = 0`;
+      }
+
+      function buildDeck() {
+        const deck = [];
+        COLORS.forEach(color => {
+          deck.push({ color, value: "0", id: cryptoId() });
+          for (let n = 1; n <= 9; n++) {
+            deck.push({ color, value: String(n), id: cryptoId() });
+            deck.push({ color, value: String(n), id: cryptoId() });
+          }
+          ["skip", "reverse", "draw2"].forEach(action => {
+            deck.push({ color, value: action, id: cryptoId() });
+            deck.push({ color, value: action, id: cryptoId() });
+          });
+        });
+        for (let i = 0; i < 4; i++) {
+          deck.push({ color: "wild", value: "wild", id: cryptoId() });
+          deck.push({ color: "wild", value: "wild4", id: cryptoId() });
+        }
+        return shuffle(deck);
+      }
+
+      function cryptoId() {
+        return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+      }
+
+      function cardSymbol(card) {
+        return ACTION_LABELS[card.value] || card.value;
+      }
+
+      function cardHtml(card, extraClass = "") {
+        return `
+          <div class="uno-card ${card.color} ${extraClass}">
+            <span class="corner top">${cardSymbol(card)}</span>
+            <span class="symbol">${cardSymbol(card)}</span>
+            <span class="corner bottom">${cardSymbol(card)}</span>
+          </div>
+        `;
+      }
+
+      function isPlusCard(card) {
+        return card && (card.value === "draw2" || card.value === "wild4");
+      }
+
+      function isActionCard(card) {
+        return card && ["skip", "reverse", "draw2", "wild", "wild4"].includes(card.value);
+      }
+
+      function hasPlusCard(playerIndex) {
+        return state.players[playerIndex].hand.some(isPlusCard);
+      }
+
+      function isPlayable(card) {
+        if (state.pendingDraw > 0) {
+          return isPlusCard(card);
+        }
+
+        const top = state.discard[state.discard.length - 1];
+        return card.color === "wild" || card.color === state.currentColor || card.value === top.value;
+      }
+
+      function updatePlayerCountOptions() {
+        const multiplayer = state.mode === "multiplayer";
+        const values = multiplayer ? [3, 4, 5, 6] : [2];
+        el.playerCount.innerHTML = values.map(v => `<option value="${v}">${v} pemain</option>`).join("");
+        renderNameInputs(Number(el.playerCount.value));
+      }
+
+      function renderNameInputs(count) {
+        const existing = [...el.namesGrid.querySelectorAll("input")].map(input => input.value);
+        el.namesGrid.innerHTML = "";
+        for (let i = 0; i < count; i++) {
+          const wrap = document.createElement("div");
+          wrap.className = "field";
+          wrap.innerHTML = `
+            <label for="playerName${i}">Pemain ${i + 1}</label>
+            <input id="playerName${i}" maxlength="18" value="${existing[i] || `Pemain ${i + 1}`}" />
+          `;
+          el.namesGrid.appendChild(wrap);
+        }
+      }
+
+      function startGame() {
+        const count = Number(el.playerCount.value);
+        const names = [...el.namesGrid.querySelectorAll("input")].map((input, index) => input.value.trim() || `Pemain ${index + 1}`);
+
+        state.difficulty = el.difficulty.value;
+        state.timeLimit = Math.max(60, Number(el.timeLimit.value) || 60);
+        state.initialCards = Math.min(15, Math.max(3, Number(el.initialCards.value) || 7));
+        state.players = names.map(name => ({
+          name,
+          hand: [],
+          finished: false,
+          rank: null
+        }));
+        state.deck = buildDeck();
+        state.discard = [];
+        state.current = 0;
+        state.direction = 1;
+        state.currentColor = "red";
+        state.pendingDraw = 0;
+        state.unoCalled = false;
+        state.awaitingPass = true;
+        state.handHidden = false;
+        state.pendingCardIndex = null;
+        state.pendingCard = null;
+        state.question = null;
+        state.gameOver = false;
+        state.rankings = [];
+        state.stats = { questions: 0, correct: 0 };
+
+        for (let r = 0; r < state.initialCards; r++) {
+          state.players.forEach(player => player.hand.push(drawFromDeck()));
+        }
+
+        let firstIndex = state.deck.findIndex(card => /^\d$/.test(card.value));
+        if (firstIndex < 0) firstIndex = 0;
+        const [firstCard] = state.deck.splice(firstIndex, 1);
+        state.discard.push(firstCard);
+        state.currentColor = firstCard.color;
+
+        el.setupScreen.classList.add("hidden");
+        el.gameScreen.classList.remove("hidden");
+        el.newGameTop.classList.remove("hidden");
+        addLog(`Permainan dimulai dengan ${count} pemain.`);
+        showPassOverlay();
+        render();
+      }
+
+      function drawFromDeck() {
+        if (state.deck.length === 0) replenishDeck();
+        return state.deck.pop();
+      }
+
+      function replenishDeck() {
+        if (state.discard.length <= 1) return;
+        const top = state.discard.pop();
+        state.deck = shuffle(state.discard.map(card => ({ ...card, id: cryptoId() })));
+        state.discard = [top];
+        addLog("Tumpukan kartu diacak kembali.");
+      }
+
+      function drawCards(playerIndex, count) {
+        for (let i = 0; i < count; i++) {
+          state.players[playerIndex].hand.push(drawFromDeck());
+        }
+      }
+
+      function render() {
+        if (state.players.length === 0) return;
+
+        el.playersRow.innerHTML = state.players.map((player, index) => {
+          const activeClass = index === state.current && !player.finished ? "active" : "";
+          const finishedClass = player.finished ? "winner" : "";
+          const status = player.finished
+            ? `Peringkat ${player.rank} • selesai`
+            : `${player.hand.length} kartu ${index === state.current ? "• giliran" : ""}`;
+
+          return `
+            <div class="player-chip ${activeClass} ${finishedClass}">
+              <div class="player-name">${escapeHtml(player.name)}</div>
+              <div class="player-count">${status}</div>
+            </div>
+          `;
+        }).join("");
+
+        const top = state.discard[state.discard.length - 1];
+        el.discardCard.innerHTML = cardHtml(top);
+        el.currentColorText.textContent = state.pendingDraw > 0
+          ? `Warna aktif: ${COLOR_NAMES[state.currentColor]} | Akumulasi: +${state.pendingDraw}`
+          : `Warna aktif: ${COLOR_NAMES[state.currentColor]}`;
+        el.deckCount.textContent = `${state.deck.length} kartu tersisa`;
+        el.turnTitle.textContent = `Giliran ${state.players[state.current].name}`;
+
+        if (state.pendingDraw > 0) {
+          el.turnHelp.textContent =
+            `Akumulasi +${state.pendingDraw}: keluarkan kartu +2/+4 atau ambil ${state.pendingDraw} kartu.`;
+        } else {
+          el.turnHelp.textContent = state.unoCalled
+            ? "UNO sudah dipanggil. Mainkan kartu yang sesuai."
+            : "Jawab soal dengan benar untuk memainkan kartu.";
+        }
+
+        const hand = state.players[state.current].hand;
+
+        if (state.awaitingPass || state.handHidden) {
+          if (state.awaitingPass) {
+            el.turnHelp.textContent = state.pendingDraw > 0
+              ? `Kartu disembunyikan. Akumulasi saat ini +${state.pendingDraw}.`
+              : "Kartu disembunyikan sampai pemain menekan tombol Saya Siap.";
+          } else {
+            el.turnHelp.textContent = state.pendingDraw > 0
+              ? `Kartu disembunyikan. Akumulasi saat ini +${state.pendingDraw}. Tampilkan kartu untuk melanjutkan.`
+              : "Kartu disembunyikan oleh pemain. Tekan Tampilkan Kartu untuk melanjutkan.";
+          }
+
+          el.hand.innerHTML = `
+            <div class="hidden-hand-message">
+              🔒 ${state.awaitingPass ? "Kartu pemain belum ditampilkan" : "Kartu sedang disembunyikan"}
+            </div>
+          `;
+        } else {
+          el.hand.innerHTML = hand.map((card, index) => {
+            const playable = isPlayable(card);
+            return `
+              <button class="hand-card ${playable ? "playable" : ""}" data-index="${index}" type="button"
+                ${playable && !state.gameOver ? "" : "disabled"}
+                aria-label="Kartu ${COLOR_NAMES[card.color]} ${cardSymbol(card)}">
+                ${cardHtml(card)}
+              </button>
+            `;
+          }).join("");
+
+          el.hand.querySelectorAll(".hand-card").forEach(btn => {
+            btn.addEventListener("click", () => attemptPlay(Number(btn.dataset.index)));
+          });
+        }
+
+        const canCallUno = hand.length === 2 && !state.awaitingPass && !state.handHidden && !state.gameOver;
+        el.unoBtn.disabled = !canCallUno;
+        el.unoBtn.classList.toggle("called", state.unoCalled);
+        el.unoBtn.textContent = state.unoCalled ? "UNO DIPANGGIL!" : "UNO!";
+
+        el.hideHandBtn.textContent = state.handHidden
+          ? "👁️ Tampilkan Kartu"
+          : "🙈 Sembunyikan Kartu";
+        el.hideHandBtn.disabled = state.awaitingPass || state.gameOver;
+
+        el.drawCardBtn.textContent = state.pendingDraw > 0
+          ? `Ambil ${state.pendingDraw} Kartu`
+          : "Ambil 1 Kartu";
+        el.drawCardBtn.disabled = state.awaitingPass || state.handHidden || state.gameOver;
+        el.drawPileBtn.disabled = state.awaitingPass || state.handHidden || state.gameOver;
+
+        el.modeStat.textContent = state.mode === "versus" ? "Versus (2 pemain)" : `Multiplayer (${state.players.length} pemain)`;
+        el.difficultyStat.textContent = DIFFICULTY_NAMES[state.difficulty];
+        el.timeStat.textContent = `${state.timeLimit} detik`;
+        el.initialCardsStat.textContent = `${state.initialCards} kartu/pemain`;
+        el.directionStat.textContent = state.direction === 1 ? "Searah jarum jam →" : "Berlawanan ←";
+      }
+
+      function attemptPlay(index) {
+        if (state.awaitingPass || state.handHidden || state.gameOver) return;
+        const card = state.players[state.current].hand[index];
+
+        if (!card || !isPlayable(card)) {
+          addLog(`${state.players[state.current].name} memilih kartu yang tidak sesuai.`);
+          return;
+        }
+
+        state.pendingCardIndex = index;
+        state.pendingCard = card;
+
+        if (isActionCard(card)) {
+          resolveCorrectPlay();
+          return;
+        }
+
+        openQuestion();
+      }
+
+      function openQuestion() {
+        state.question = generateQuestion(state.difficulty);
+        state.timeLeft = state.timeLimit;
+        state.stats.questions += 1;
+
+        el.questionTopic.textContent = state.question.topic;
+        setHtmlAndTypeset(el.questionText, state.question.prompt);
+        if (state.question.useVisual) {
+          el.questionVisual.classList.remove("hidden");
+          el.questionVisual.innerHTML = renderCoordinateVisual(state.question.visual);
+        } else {
+          el.questionVisual.classList.add("hidden");
+          el.questionVisual.innerHTML = "";
+        }
+        el.questionOptions.innerHTML = "";
+        el.questionFeedback.className = "feedback hidden";
+        el.questionFeedback.innerHTML = "";
+
+        state.question.options.forEach((option, index) => {
+          const btn = document.createElement("button");
+          btn.className = "option-btn";
+          btn.type = "button";
+          btn.innerHTML = option;
+          btn.addEventListener("click", () => answerQuestion(index));
+          el.questionOptions.appendChild(btn);
+        });
+
+        updateTimerText();
+        el.questionOverlay.classList.remove("hidden");
+        typesetQuestionOverlay();
+        clearInterval(state.timerId);
+        state.timerId = setInterval(() => {
+          state.timeLeft -= 1;
+          updateTimerText();
+          if (state.timeLeft <= 0) {
+            clearInterval(state.timerId);
+            handleWrongAnswer(true);
+          }
+        }, 1000);
+      }
+
+      function updateTimerText() {
+        el.questionTimer.textContent = `${state.timeLeft} detik`;
+        el.questionTimer.classList.toggle("danger", state.timeLeft <= 5);
+      }
+
+      function answerQuestion(selectedIndex) {
+        clearInterval(state.timerId);
+        showAnswerCorrection(selectedIndex);
+
+        if (selectedIndex === state.question.answerIndex) {
+          state.stats.correct += 1;
+          el.questionFeedback.className = "feedback correct";
+          el.questionFeedback.innerHTML =
+            `Benar! Jawaban: ${state.question.options[state.question.answerIndex]}. ${state.question.explanation}`;
+          renderMath(el.questionFeedback);
+          setTimeout(resolveCorrectPlay, 1200);
+        } else {
+          handleWrongAnswer(false, selectedIndex);
+        }
+      }
+
+      function showAnswerCorrection(selectedIndex = null) {
+        const buttons = [...el.questionOptions.querySelectorAll("button")];
+        buttons.forEach((btn, index) => {
+          btn.disabled = true;
+          btn.classList.remove("correct-answer", "wrong-answer");
+
+          if (index === state.question.answerIndex) {
+            btn.classList.add("correct-answer");
+          }
+
+          if (
+            selectedIndex !== null &&
+            index === selectedIndex &&
+            index !== state.question.answerIndex
+          ) {
+            btn.classList.add("wrong-answer");
+          }
+        });
+      }
+
+      function disableQuestionOptions() {
+        el.questionOptions.querySelectorAll("button").forEach(btn => btn.disabled = true);
+      }
+
+      function handleWrongAnswer(timeout, selectedIndex = null) {
+        clearInterval(state.timerId);
+        showAnswerCorrection(selectedIndex);
+
+        const correctAnswer = state.question.options[state.question.answerIndex];
+        el.questionFeedback.className = "feedback wrong";
+        el.questionFeedback.innerHTML = timeout
+          ? `Waktu habis. Jawaban yang benar: ${correctAnswer}. ${state.question.explanation}`
+          : `Jawaban belum tepat. Jawaban yang benar: ${correctAnswer}. ${state.question.explanation}`;
+        renderMath(el.questionFeedback);
+
+        const playerName = state.players[state.current].name;
+        const penaltyAmount = state.pendingDraw > 0 ? state.pendingDraw : 1;
+
+        drawCards(state.current, penaltyAmount);
+        if (state.pendingDraw > 0) {
+          state.pendingDraw = 0;
+          el.questionFeedback.innerHTML +=
+            ` Karena gagal menumpuk kartu +, ${playerName} mengambil ${penaltyAmount} kartu akumulasi.`;
+          renderMath(el.questionFeedback);
+        }
+
+        addLog(`${playerName} ${timeout ? "kehabisan waktu" : "menjawab salah"} dan mengambil ${penaltyAmount} kartu.`);
+        state.pendingCardIndex = null;
+        state.pendingCard = null;
+        state.unoCalled = false;
+
+        setTimeout(() => {
+          el.questionOverlay.classList.add("hidden");
+
+          advanceTurn(1, `${playerName} mengambil ${penaltyAmount} kartu.`);
+        }, 2200);
+      }
+
+      function resolveCorrectPlay() {
+        const player = state.players[state.current];
+        const card = player.hand.splice(state.pendingCardIndex, 1)[0];
+        state.discard.push(card);
+        if (card.color !== "wild") state.currentColor = card.color;
+        addLog(`${player.name} memainkan ${COLOR_NAMES[card.color]} ${cardSymbol(card)}.`);
+
+        state.pendingCardIndex = null;
+        state.pendingCard = card;
+        el.questionOverlay.classList.add("hidden");
+
+        if (player.hand.length === 0) {
+          registerFinishedPlayer(state.current);
+
+          if (state.gameOver) return;
+        }
+
+        if (player.hand.length === 1 && !state.unoCalled) {
+          drawCards(state.current, 2);
+          addLog(`${player.name} lupa memanggil UNO dan mendapat penalti +2.`);
+        }
+
+        if (card.color === "wild") {
+          el.colorOverlay.classList.remove("hidden");
+        } else {
+          applyCardEffect(card);
+        }
+      }
+
+      function applyCardEffect(card) {
+        const playerName = state.players[state.current].name;
+
+        if (card.value === "skip") {
+          const skipped = indexAfter(state.current, 1);
+          addLog(`${state.players[skipped].name} dilewati.`);
+          state.unoCalled = false;
+          advanceTurn(2);
+          return;
+        }
+
+        if (card.value === "reverse") {
+          state.direction *= -1;
+          addLog(`${playerName} membalik arah permainan.`);
+          state.unoCalled = false;
+          advanceTurn(state.players.length === 2 ? 2 : 1);
+          return;
+        }
+
+        if (card.value === "draw2") {
+          state.pendingDraw += 2;
+          addLog(`Akumulasi kartu bertambah menjadi +${state.pendingDraw}.`);
+          state.unoCalled = false;
+          advanceTurn(1);
+          return;
+        }
+
+        if (card.value === "wild4") {
+          state.pendingDraw += 4;
+          addLog(`Akumulasi kartu bertambah menjadi +${state.pendingDraw}.`);
+          state.unoCalled = false;
+          advanceTurn(1);
+          return;
+        }
+
+        state.unoCalled = false;
+        advanceTurn(1);
+      }
+
+      function indexAfter(start, steps) {
+        let index = start;
+        let completedSteps = 0;
+        let guard = 0;
+        const maxChecks = Math.max(1, state.players.length * Math.max(steps, 1) * 2);
+
+        while (completedSteps < steps && guard < maxChecks) {
+          index = (index + state.direction + state.players.length) % state.players.length;
+          if (!state.players[index].finished) completedSteps += 1;
+          guard += 1;
+        }
+
+        return index;
+      }
+
+      function advanceTurn(steps, passMessage = "") {
+        state.current = indexAfter(state.current, steps);
+        state.awaitingPass = true;
+        state.handHidden = false;
+        state.unoCalled = false;
+        render();
+        showPassOverlay(passMessage);
+      }
+
+      function showPassOverlay(message = "") {
+        el.passStatus.textContent = message;
+        el.passStatus.classList.toggle("hidden", !message);
+        el.passPlayerName.textContent = state.players[state.current].name;
+        el.passOverlay.classList.remove("hidden");
+      }
+
+      function activePlayerIndexes() {
+        return state.players
+          .map((player, index) => player.finished ? -1 : index)
+          .filter(index => index >= 0);
+      }
+
+      function registerFinishedPlayer(index) {
+        const player = state.players[index];
+        if (!player || player.finished) return;
+
+        player.finished = true;
+        player.rank = state.rankings.length + 1;
+        state.rankings.push(index);
+        addLog(`${player.name} meraih peringkat ${player.rank}.`);
+
+        const remaining = activePlayerIndexes();
+
+        if (remaining.length === 1) {
+          const lastIndex = remaining[0];
+          const lastPlayer = state.players[lastIndex];
+          lastPlayer.finished = true;
+          lastPlayer.rank = state.rankings.length + 1;
+          state.rankings.push(lastIndex);
+          showFinalRanking();
+          return;
+        }
+
+        if (remaining.length === 0) {
+          showFinalRanking();
+        }
+      }
+
+      function rankingMedal(position) {
+        if (position === 1) return "🥇";
+        if (position === 2) return "🥈";
+        if (position === 3) return "🥉";
+        return `${position}.`;
+      }
+
+      function showFinalRanking() {
+        state.gameOver = true;
+        clearInterval(state.timerId);
+        el.questionOverlay.classList.add("hidden");
+        el.passOverlay.classList.add("hidden");
+        el.colorOverlay.classList.add("hidden");
+
+        const accuracy = state.stats.questions
+          ? Math.round((state.stats.correct / state.stats.questions) * 100)
+          : 0;
+
+        el.winnerName.innerHTML = state.rankings.map((playerIndex, order) => {
+          const player = state.players[playerIndex];
+          const position = order + 1;
+          return `
+            <div class="ranking-item">
+              <div class="ranking-position">${rankingMedal(position)}</div>
+              <div class="ranking-player">${escapeHtml(player.name)}</div>
+              <div class="ranking-label">Peringkat ${position}</div>
+            </div>
+          `;
+        }).join("");
+
+        el.winnerSummary.textContent =
+          `Akurasi jawaban bersama: ${state.stats.correct}/${state.stats.questions} soal (${accuracy}%).`;
+        el.winnerOverlay.classList.remove("hidden");
+        render();
+      }
+
+      function readyForTurn() {
+        el.passOverlay.classList.add("hidden");
+
+        if (state.pendingDraw > 0 && !hasPlusCard(state.current)) {
+          const amount = state.pendingDraw;
+          const name = state.players[state.current].name;
+          drawCards(state.current, amount);
+          state.pendingDraw = 0;
+          state.unoCalled = false;
+
+          advanceTurn(1, `${name} tidak memiliki kartu + dan mengambil ${amount} kartu.`);
+          return;
+        }
+
+        state.awaitingPass = false;
+        state.handHidden = false;
+        render();
+      }
+
+      function toggleHandVisibility() {
+        if (state.awaitingPass || state.gameOver) return;
+        state.handHidden = !state.handHidden;
+        render();
+      }
+
+      function manualDraw() {
+        if (state.awaitingPass || state.handHidden || state.gameOver) return;
+        const name = state.players[state.current].name;
+
+        if (state.pendingDraw > 0) {
+          const amount = state.pendingDraw;
+          drawCards(state.current, amount);
+          state.pendingDraw = 0;
+          state.unoCalled = false;
+
+          advanceTurn(1, `${name} mengambil seluruh akumulasi sebanyak ${amount} kartu.`);
+          return;
+        }
+
+        drawCards(state.current, 1);
+        addLog(`${name} mengambil 1 kartu dan mengakhiri giliran.`);
+        state.unoCalled = false;
+        advanceTurn(1);
+      }
+
+      function callUno() {
+        if (state.players[state.current].hand.length !== 2 || state.awaitingPass || state.handHidden) return;
+        state.unoCalled = true;
+        addLog(`${state.players[state.current].name} memanggil UNO!`);
+        render();
+      }
+
+      function finishGame(index) {
+        registerFinishedPlayer(index);
+      }
+
+      function resetToSetup() {
+        clearInterval(state.timerId);
+        el.questionOverlay.classList.add("hidden");
+        el.passOverlay.classList.add("hidden");
+        el.colorOverlay.classList.add("hidden");
+        el.winnerOverlay.classList.add("hidden");
+        el.gameScreen.classList.add("hidden");
+        el.setupScreen.classList.remove("hidden");
+        el.newGameTop.classList.add("hidden");
+      }
+
+      function addLog() {
+        // Riwayat permainan sengaja tidak ditampilkan.
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+
+      function renderMath(target) {
+        if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+          window.MathJax.typesetPromise([target]).catch(() => {});
+        }
+      }
+
+      function setHtmlAndTypeset(target, html) {
+        target.innerHTML = html;
+        renderMath(target);
+      }
+
+      function typesetQuestionOverlay() {
+        if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+          window.MathJax.typesetPromise([el.questionOverlay]).catch(() => {});
+        }
+      }
+
+      function latexWrap(expr, display = false) {
+        return display ? `\\[${expr}\\]` : `\\(${expr}\\)`;
+      }
+
+      function latexExponent(exp) {
+        if (exp === 1) return "";
+        return `^{${exp}}`;
+      }
+
+      function latexPower(base, exp) {
+        if (exp === 0) return "1";
+        if (exp === 1) return String(base);
+        return `${base}^{${exp}}`;
+      }
+
+      function simplifyRatio(num, den) {
+        if (den < 0) {
+          num *= -1;
+          den *= -1;
+        }
+        const g = gcdInteger(num, den) || 1;
+        return { num: num / g, den: den / g };
+      }
+
+      function rawMonomialLatex(coefficient, exponents) {
+        const parts = [];
+        const keys = Object.keys(exponents);
+        const hasVariables = keys.some(key => exponents[key] !== 0);
+        if (coefficient !== 1 || !hasVariables) parts.push(String(coefficient));
+        keys.forEach(key => {
+          const exp = exponents[key];
+          if (exp !== 0) parts.push(latexPower(key, exp));
+        });
+        return parts.join("") || "1";
+      }
+
+      function monomialFractionLatex(coefNum, coefDen, exponents) {
+        const ratio = simplifyRatio(coefNum, coefDen);
+        const numeratorParts = [];
+        const denominatorParts = [];
+        const keys = Object.keys(exponents);
+        const positiveCount = keys.filter(key => exponents[key] > 0).length;
+
+        if (ratio.num === -1 && positiveCount > 0) {
+          numeratorParts.push("-");
+        } else if (ratio.num !== 1 || (positiveCount === 0 && ratio.den === 1)) {
+          numeratorParts.push(String(ratio.num));
+        }
+
+        if (ratio.den !== 1) denominatorParts.push(String(ratio.den));
+
+        keys.forEach(key => {
+          const exp = exponents[key];
+          if (exp > 0) numeratorParts.push(latexPower(key, exp));
+          if (exp < 0) denominatorParts.push(latexPower(key, Math.abs(exp)));
+        });
+
+        if (!numeratorParts.length) numeratorParts.push("1");
+        const numerator = numeratorParts.join("");
+        if (!denominatorParts.length) return numerator;
+        return `\\frac{${numerator}}{${denominatorParts.join("")}}`;
+      }
+
+      function buildDistractorSet(correct, candidates, fallbackFactory) {
+        return uniqueTextOptions(correct, candidates, fallbackFactory).map(item => {
+          if (item.startsWith('\\(') || item.startsWith('\\[')) return item;
+          return latexWrap(item);
+        });
+      }
+
+      const SUPERSCRIPT_MAP = {
+        "-": "⁻", "+": "⁺", "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴",
+        "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹", "(": "⁽", ")": "⁾",
+        "n": "ⁿ", "m": "ᵐ", "x": "ˣ", "y": "ʸ", "k": "ᵏ"
+      };
+
+      function superscript(value) {
+        return String(value)
+          .split("")
+          .map(char => SUPERSCRIPT_MAP[char] || char)
+          .join("");
+      }
+
+      function power(base, exponent) {
+        if (exponent === 0) return "1";
+        if (exponent === 1) return String(base);
+        return `${base}${superscript(exponent)}`;
+      }
+
+      function monomial(terms) {
+        const result = terms
+          .filter(term => term.exponent !== 0)
+          .map(term => power(term.base, term.exponent))
+          .join("");
+        return result || "1";
+      }
+
+      function fraction(numerator, denominator) {
+        return latexWrap(`\\displaystyle \\frac{${numerator}}{${denominator}}`);
+      }
+
+      function writtenPower(base, exponent) {
+        return `${base}${superscript(exponent)}`;
+      }
+
+      function coefficientMonomial(coefficient, terms) {
+        const literalPart = monomial(terms);
+        return literalPart === "1" ? String(coefficient) : `${coefficient}${literalPart}`;
+      }
+
+      function generateQuestion(level) {
+        const easy = [
+          qProductSameBase,
+          qQuotientSameBase,
+          qPowerOfPower,
+          qZeroExponent,
+          qNumericExponent
+        ];
+
+        const medium = [
+          qProductSameBase,
+          qQuotientSameBase,
+          qPowerOfPower,
+          qNegativeExponent,
+          qPowerOfProduct,
+          qPowerOfQuotient,
+          () => qMixedSameBase(false),
+          qFindUnknownExponent,
+          qPowerOfMonomial,
+          qLatexFractionSimplify,
+          qLatexNestedQuotientPower
+        ];
+
+        const hard = [
+          qNegativeExponent,
+          () => qMixedSameBase(true),
+          qCombinedPower,
+          qTwoVariablePower,
+          qRootOfPower,
+          qFractionalExponent,
+          qFindUnknownExponentHard,
+          qMonomialQuotient,
+          qLatexFractionSimplify,
+          qLatexPowerFraction,
+          qLatexNestedQuotientPower,
+          qLatexMixedMonomialOperation
+        ];
+
+        const pool = level === "easy" ? easy : level === "hard" ? hard : medium;
+        return choose(pool)();
+      }
+
+      function qProductSameBase() {
+        const base = choose(["a", "b", "x", "y", "m"]);
+        const first = randInt(2, 7);
+        const second = randInt(2, 7);
+        const exponent = first + second;
+        const correct = power(base, exponent);
+        const options = uniqueTextOptions(
+          correct,
+          [
+            power(base, first * second),
+            power(base, Math.abs(first - second)),
+            `${power(base, first)}${power(base, second)}`,
+            power(`${base}${base}`, exponent),
+            power(base, exponent + 1)
+          ],
+          () => power(base, randInt(1, 15))
+        );
+
+        return {
+          topic: "Perkalian Pangkat",
+          prompt: `Sederhanakan ${power(base, first)} × ${power(base, second)}.`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Karena basis sama, pangkat dijumlahkan: ${first} + ${second} = ${exponent}.`,
+          useVisual: false
+        };
+      }
+
+      function qQuotientSameBase() {
+        const base = choose(["a", "b", "x", "y", "p"]);
+        const denominatorExponent = randInt(1, 6);
+        const numeratorExponent = denominatorExponent + randInt(1, 7);
+        const exponent = numeratorExponent - denominatorExponent;
+        const correct = power(base, exponent);
+        const options = uniqueTextOptions(
+          correct,
+          [
+            power(base, numeratorExponent + denominatorExponent),
+            power(base, numeratorExponent * denominatorExponent),
+            power(base, denominatorExponent - numeratorExponent),
+            `${numeratorExponent - denominatorExponent}${base}`,
+            power(base, exponent + 1)
+          ],
+          () => power(base, randInt(-8, 15))
+        );
+
+        return {
+          topic: "Pembagian Pangkat",
+          prompt: `Sederhanakan ${power(base, numeratorExponent)} ÷ ${power(base, denominatorExponent)}.`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Karena basis sama, pangkat dikurangkan: ${numeratorExponent} − ${denominatorExponent} = ${exponent}.`,
+          useVisual: false
+        };
+      }
+
+      function qPowerOfPower() {
+        const base = choose(["a", "b", "x", "y"]);
+        const inside = randInt(2, 6);
+        const outside = randInt(2, 5);
+        const exponent = inside * outside;
+        const correct = power(base, exponent);
+        const options = uniqueTextOptions(
+          correct,
+          [
+            power(base, inside + outside),
+            power(base, Math.abs(inside - outside)),
+            power(base, inside * outside + 1),
+            power(`${base}${outside}`, inside),
+            `${outside}${power(base, inside)}`
+          ],
+          () => power(base, randInt(2, 24))
+        );
+
+        return {
+          topic: "Pangkat dari Pangkat",
+          prompt: `Sederhanakan (${power(base, inside)})${superscript(outside)}.`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Pangkat dikalikan: ${inside} × ${outside} = ${exponent}.`,
+          useVisual: false
+        };
+      }
+
+      function qZeroExponent() {
+        const base = choose(["2", "3", "5", "a", "x", "y"]);
+        const correct = "1";
+        const options = shuffle([correct, "0", base, "Tidak terdefinisi"]);
+
+        return {
+          topic: "Pangkat Nol",
+          prompt: `Dengan ${base} ≠ 0, nilai dari ${writtenPower(base, 0)} adalah ...`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Setiap bilangan atau variabel bukan nol berpangkat nol bernilai 1.`,
+          useVisual: false
+        };
+      }
+
+      function qNegativeExponent() {
+        const base = choose(["a", "b", "x", "y"]);
+        const exponent = randInt(2, 6);
+        const correct = fraction("1", latexPower(base, exponent));
+        const options = uniqueTextOptions(
+          correct,
+          [
+            latexWrap(`-${latexPower(base, exponent)}`),
+            latexWrap(latexPower(base, exponent)),
+            fraction("1", `${exponent}${base}`),
+            latexWrap(latexPower(base, -exponent + 1)),
+            fraction(String(exponent), base)
+          ],
+          () => fraction("1", latexPower(base, randInt(1, 9)))
+        );
+
+        return {
+          topic: "Pangkat Negatif",
+          prompt: `Ubah ${latexWrap(latexPower(base, -exponent))} menjadi bentuk berpangkat positif.`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `${latexWrap(latexPower(base, -exponent))} = ${correct}.`,
+          useVisual: false
+        };
+      }
+
+      function qPowerOfProduct() {
+        const [firstBase, secondBase] = shuffle(["a", "b", "x", "y"]).slice(0, 2);
+        const exponent = randInt(2, 5);
+        const correct = `${power(firstBase, exponent)}${power(secondBase, exponent)}`;
+        const options = uniqueTextOptions(
+          correct,
+          [
+            `${power(firstBase, exponent)} + ${power(secondBase, exponent)}`,
+            `${firstBase}${power(secondBase, exponent)}`,
+            power(`${firstBase}${secondBase}`, exponent * 2),
+            `${power(firstBase, exponent + 1)}${power(secondBase, exponent)}`,
+            `${power(firstBase, exponent)}${secondBase}`
+          ],
+          () => `${power(firstBase, randInt(1, 7))}${power(secondBase, randInt(1, 7))}`
+        );
+
+        return {
+          topic: "Pangkat pada Perkalian",
+          prompt: `Sederhanakan (${firstBase}${secondBase})${superscript(exponent)}.`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Pangkat didistribusikan ke setiap faktor: ${correct}.`,
+          useVisual: false
+        };
+      }
+
+      function qPowerOfQuotient() {
+        const [numerator, denominator] = shuffle(["a", "b", "x", "y"]).slice(0, 2);
+        const exponent = randInt(2, 5);
+        const correct = fraction(latexPower(numerator, exponent), latexPower(denominator, exponent));
+        const options = uniqueTextOptions(
+          correct,
+          [
+            fraction(latexPower(numerator, exponent), denominator),
+            fraction(numerator, latexPower(denominator, exponent)),
+            fraction(latexPower(denominator, exponent), latexPower(numerator, exponent)),
+            fraction(latexPower(numerator, exponent + 1), latexPower(denominator, exponent)),
+            latexWrap(`\\displaystyle \\left(\\frac{${numerator}}{${denominator}}\\right)^{${exponent + 1}}`)
+          ],
+          () => fraction(latexPower(numerator, randInt(1, 7)), latexPower(denominator, randInt(1, 7)))
+        );
+
+        return {
+          topic: "Pangkat pada Pembagian",
+          prompt: `Sederhanakan ${latexWrap(`\\displaystyle \\left(\\frac{${numerator}}{${denominator}}\\right)^{${exponent}}`)}.`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Pangkat diterapkan pada pembilang dan penyebut: ${correct}.`,
+          useVisual: false
+        };
+      }
+
+      function qMixedSameBase(allowNegative) {
+        const base = choose(["a", "b", "x", "y"]);
+        const first = randInt(2, 8);
+        const second = randInt(1, 7);
+        let divisor = randInt(1, allowNegative ? 14 : first + second - 1);
+        if (!allowNegative && divisor >= first + second) divisor = first + second - 1;
+        const exponent = first + second - divisor;
+        const correct = power(base, exponent);
+        const options = uniqueTextOptions(
+          correct,
+          [
+            power(base, first + second + divisor),
+            power(base, first * second - divisor),
+            power(base, first - second - divisor),
+            power(base, divisor - first - second),
+            power(base, exponent + 2)
+          ],
+          () => power(base, randInt(-14, 20))
+        );
+
+        return {
+          topic: "Operasi Pangkat Campuran",
+          prompt: `Sederhanakan ${power(base, first)} × ${power(base, second)} ÷ ${power(base, divisor)}.`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Pangkat akhir = ${first} + ${second} − ${divisor} = ${exponent}.`,
+          useVisual: false
+        };
+      }
+
+      function qCombinedPower() {
+        const base = choose(["a", "x", "y"]);
+        const inside = randInt(2, 6);
+        const outside = randInt(2, 4);
+        const multiplier = randInt(1, 6);
+        const divisor = randInt(2, 12);
+        const exponent = (inside * outside) + multiplier - divisor;
+        const correct = power(base, exponent);
+        const options = uniqueTextOptions(
+          correct,
+          [
+            power(base, inside + outside + multiplier - divisor),
+            power(base, (inside * outside) + multiplier + divisor),
+            power(base, inside * (outside + multiplier - divisor)),
+            power(base, divisor - (inside * outside) - multiplier),
+            power(base, exponent + 1)
+          ],
+          () => power(base, randInt(-20, 28))
+        );
+
+        return {
+          topic: "Penyederhanaan Bertahap",
+          prompt: `Sederhanakan (${power(base, inside)})${superscript(outside)} × ${power(base, multiplier)} ÷ ${power(base, divisor)}.`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Pangkat akhir = (${inside} × ${outside}) + ${multiplier} − ${divisor} = ${exponent}.`,
+          useVisual: false
+        };
+      }
+
+      function qTwoVariablePower() {
+        const outside = randInt(2, 4);
+        const xInside = randInt(1, 5);
+        const yInside = randInt(1, 5);
+        const xDivisor = randInt(1, 8);
+        const yDivisor = randInt(1, 8);
+        const xExponent = (xInside * outside) - xDivisor;
+        const yExponent = (yInside * outside) - yDivisor;
+        const correct = monomial([
+          { base: "x", exponent: xExponent },
+          { base: "y", exponent: yExponent }
+        ]);
+        const options = uniqueTextOptions(
+          correct,
+          [
+            monomial([{ base: "x", exponent: xInside + outside - xDivisor }, { base: "y", exponent: yInside + outside - yDivisor }]),
+            monomial([{ base: "x", exponent: xInside * outside + xDivisor }, { base: "y", exponent: yInside * outside + yDivisor }]),
+            monomial([{ base: "x", exponent: xInside * outside - yDivisor }, { base: "y", exponent: yInside * outside - xDivisor }]),
+            monomial([{ base: "x", exponent: xExponent + 1 }, { base: "y", exponent: yExponent - 1 }]),
+            monomial([{ base: "x", exponent: -xExponent }, { base: "y", exponent: -yExponent }])
+          ],
+          () => monomial([
+            { base: "x", exponent: randInt(-8, 15) },
+            { base: "y", exponent: randInt(-8, 15) }
+          ])
+        );
+
+        return {
+          topic: "Pangkat Dua Variabel",
+          prompt: `Sederhanakan (${power("x", xInside)}${power("y", yInside)})${superscript(outside)} ÷ (${power("x", xDivisor)}${power("y", yDivisor)}).`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Pangkat x = (${xInside} × ${outside}) − ${xDivisor} = ${xExponent}, sedangkan pangkat y = (${yInside} × ${outside}) − ${yDivisor} = ${yExponent}.`,
+          useVisual: false
+        };
+      }
+
+      function qNumericExponent() {
+        const base = choose([2, 3]);
+        const first = randInt(1, base === 2 ? 5 : 3);
+        const second = randInt(1, base === 2 ? 4 : 2);
+        const correctValue = base ** (first + second);
+        const candidates = [
+          base ** (first * second),
+          (base ** first) + (base ** second),
+          base ** Math.abs(first - second),
+          (base * 2) ** (first + second),
+          correctValue + base
+        ].map(String);
+        const correct = String(correctValue);
+        const options = uniqueTextOptions(correct, candidates, () => String(randInt(2, 1200)));
+
+        return {
+          topic: "Nilai Bentuk Pangkat",
+          prompt: `Hitung nilai ${power(base, first)} × ${power(base, second)}.`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `${power(base, first)} × ${power(base, second)} = ${power(base, first + second)} = ${correctValue}.`,
+          useVisual: false
+        };
+      }
+
+      function qFindUnknownExponent() {
+        const base = choose([2, 3, 5, "a", "x"]);
+        const known = randInt(1, 6);
+        const unknown = randInt(1, 7);
+        const result = known + unknown;
+        const correct = String(unknown);
+        const options = uniqueTextOptions(
+          correct,
+          [String(result), String(known), String(result + known), String(Math.abs(result - known) + 1), String(unknown + 2)],
+          () => String(randInt(0, 14))
+        );
+
+        return {
+          topic: "Menentukan Pangkat",
+          prompt: `Jika ${power(base, "n")} × ${power(base, known)} = ${power(base, result)}, nilai n adalah ...`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `n + ${known} = ${result}, sehingga n = ${unknown}.`,
+          useVisual: false
+        };
+      }
+
+      function qFindUnknownExponentHard() {
+        const base = choose([2, 3, "a", "x"]);
+        const multiplier = randInt(2, 4);
+        const divisor = randInt(1, 7);
+        const unknown = randInt(2, 7);
+        const result = (unknown * multiplier) - divisor;
+        const correct = String(unknown);
+        const options = uniqueTextOptions(
+          correct,
+          [String(result), String(result + divisor), String(multiplier + divisor), String(unknown + 1), String(Math.abs(unknown - multiplier))],
+          () => String(randInt(0, 14))
+        );
+
+        return {
+          topic: "Persamaan Eksponen Sederhana",
+          prompt: `Jika (${power(base, "n")})${superscript(multiplier)} ÷ ${power(base, divisor)} = ${power(base, result)}, nilai n adalah ...`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `${multiplier}n − ${divisor} = ${result}, sehingga n = ${unknown}.`,
+          useVisual: false
+        };
+      }
+
+      function qPowerOfMonomial() {
+        const coefficient = randInt(2, 4);
+        const variableExponent = randInt(1, 4);
+        const outside = randInt(2, 3);
+        const resultCoefficient = coefficient ** outside;
+        const resultExponent = variableExponent * outside;
+        const correct = `${resultCoefficient}${power("x", resultExponent)}`;
+        const options = uniqueTextOptions(
+          correct,
+          [
+            `${coefficient * outside}${power("x", resultExponent)}`,
+            `${resultCoefficient}${power("x", variableExponent + outside)}`,
+            `${coefficient}${power("x", resultExponent)}`,
+            `${resultCoefficient}${power("x", variableExponent)}`,
+            `${coefficient + outside}${power("x", variableExponent * outside)}`
+          ],
+          () => `${randInt(2, 64)}${power("x", randInt(2, 12))}`
+        );
+
+        return {
+          topic: "Pangkat pada Monomial",
+          prompt: `Sederhanakan (${coefficient}${power("x", variableExponent)})${superscript(outside)}.`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `${coefficient}${superscript(outside)} = ${resultCoefficient} dan pangkat x menjadi ${variableExponent} × ${outside} = ${resultExponent}.`,
+          useVisual: false
+        };
+      }
+
+      function qRootOfPower() {
+        const root = choose([2, 3]);
+        const resultExponent = randInt(2, 5);
+        const insideExponent = root * resultExponent;
+        const base = choose(["a", "x", "y"]);
+        const rootSymbol = root === 2 ? "√" : "∛";
+        const correct = power(base, resultExponent);
+        const options = uniqueTextOptions(
+          correct,
+          [
+            power(base, insideExponent - root),
+            power(base, insideExponent * root),
+            power(base, insideExponent + root),
+            power(base, resultExponent + 1),
+            `${root}${power(base, resultExponent)}`
+          ],
+          () => power(base, randInt(1, 18))
+        );
+
+        return {
+          topic: "Akar dan Pangkat",
+          prompt: `Dengan ${base} ≥ 0, sederhanakan ${rootSymbol}(${power(base, insideExponent)}).`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Pangkat dibagi indeks akar: ${insideExponent} ÷ ${root} = ${resultExponent}.`,
+          useVisual: false
+        };
+      }
+
+      function qFractionalExponent() {
+        const root = choose([2, 3, 4]);
+        const numerator = randInt(2, 9);
+        const base = choose(["a", "x", "y"]);
+        const rootSymbol = root === 2 ? "√" : root === 3 ? "∛" : "∜";
+        const correct = `${base}^(${numerator}/${root})`;
+        const options = uniqueTextOptions(
+          correct,
+          [
+            `${base}^(${root}/${numerator})`,
+            `${base}^(${numerator * root})`,
+            `${base}^(${numerator - root})`,
+            `${base}^(${numerator + root})`,
+            `${root}${power(base, numerator)}`
+          ],
+          () => `${base}^(${randInt(1, 10)}/${randInt(2, 5)})`
+        );
+
+        return {
+          topic: "Pangkat Pecahan",
+          prompt: `Ubah ${rootSymbol}(${power(base, numerator)}) ke bentuk pangkat pecahan.`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Akar ke-${root} setara dengan pangkat 1/${root}, sehingga hasilnya ${correct}.`,
+          useVisual: false
+        };
+      }
+
+      function qMonomialQuotient() {
+        const coefficientTop = choose([8, 12, 18, 24, 27, 32]);
+        const divisors = [];
+        for (let i = 2; i <= 9; i++) {
+          if (coefficientTop % i === 0) divisors.push(i);
+        }
+        const coefficientBottom = choose(divisors);
+        const xTop = randInt(3, 10);
+        const xBottom = randInt(1, 8);
+        const yTop = randInt(2, 9);
+        const yBottom = randInt(1, 8);
+        const resultCoefficient = coefficientTop / coefficientBottom;
+        const xResult = xTop - xBottom;
+        const yResult = yTop - yBottom;
+        const correct = coefficientMonomial(resultCoefficient, [{ base: "x", exponent: xResult }, { base: "y", exponent: yResult }]);
+        const options = uniqueTextOptions(
+          correct,
+          [
+            coefficientMonomial(coefficientTop - coefficientBottom, [{ base: "x", exponent: xResult }, { base: "y", exponent: yResult }]),
+            coefficientMonomial(resultCoefficient, [{ base: "x", exponent: xTop + xBottom }, { base: "y", exponent: yTop + yBottom }]),
+            coefficientMonomial(resultCoefficient, [{ base: "x", exponent: xBottom - xTop }, { base: "y", exponent: yBottom - yTop }]),
+            coefficientMonomial(coefficientTop * coefficientBottom, [{ base: "x", exponent: xResult }, { base: "y", exponent: yResult }]),
+            coefficientMonomial(resultCoefficient, [{ base: "x", exponent: xResult + 1 }, { base: "y", exponent: yResult - 1 }])
+          ],
+          () => coefficientMonomial(randInt(1, 24), [{ base: "x", exponent: randInt(-8, 14) }, { base: "y", exponent: randInt(-8, 14) }])
+        );
+
+        return {
+          topic: "Pembagian Bentuk Aljabar",
+          prompt: `Sederhanakan (${coefficientTop}${power("x", xTop)}${power("y", yTop)}) ÷ (${coefficientBottom}${power("x", xBottom)}${power("y", yBottom)}).`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Koefisien dibagi, sedangkan pangkat dengan basis sama dikurangkan.`,
+          useVisual: false
+        };
+      }
+
+      function qLatexFractionSimplify() {
+        const coefTop = choose([6, 7, 8, 9, 10, 12, 14, 15]);
+        const possibleDen = [12, 18, 20, 21, 24, 28, 30, 35, 42, 45, 56, 60, 63, 70, 84];
+        const coefBottom = choose(possibleDen.filter(n => n % coefTop === 0 || coefTop % n === 0 || gcdInteger(n, coefTop) > 1));
+        const vars = shuffle(["x", "y", "z"]).slice(0, 3);
+        const topExp = {
+          [vars[0]]: randInt(2, 6),
+          [vars[1]]: -randInt(2, 5),
+          [vars[2]]: -randInt(2, 6)
+        };
+        const bottomExp = {
+          [vars[0]]: -randInt(1, 7),
+          [vars[1]]: -randInt(1, 3),
+          [vars[2]]: -randInt(1, 4)
+        };
+        const resultExp = {};
+        vars.forEach(v => resultExp[v] = topExp[v] - bottomExp[v]);
+        const expr = `\\frac{${rawMonomialLatex(coefTop, topExp)}}{${rawMonomialLatex(coefBottom, bottomExp)}}`;
+        const correctExpr = monomialFractionLatex(coefTop, coefBottom, resultExp);
+        const correct = latexWrap(correctExpr);
+        const options = buildDistractorSet(correct, [
+          latexWrap(monomialFractionLatex(coefBottom, coefTop, resultExp)),
+          latexWrap(monomialFractionLatex(coefTop, coefBottom, Object.fromEntries(vars.map(v => [v, topExp[v] + bottomExp[v]])))),
+          latexWrap(monomialFractionLatex(coefTop + coefBottom, 1, resultExp)),
+          latexWrap(monomialFractionLatex(coefTop, coefBottom, Object.fromEntries(vars.map(v => [v, bottomExp[v] - topExp[v]]))))
+        ], () => latexWrap(monomialFractionLatex(randInt(1, 12), randInt(1, 12), Object.fromEntries(vars.map(v => [v, randInt(-8, 10)])))));
+
+        return {
+          topic: "Eksponen Aljabar (LaTeX)",
+          prompt: `Sederhanakan bentuk pangkat berikut:<br>${latexWrap(expr, true)}<span class="math-note">Gunakan aturan pembagian koefisien dan pengurangan pangkat pada basis yang sama.</span>`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Koefisien disederhanakan, lalu pangkat tiap variabel dikurangkan. Hasilnya ${correct}.`,
+          useVisual: false
+        };
+      }
+
+      function qLatexPowerFraction() {
+        const topCoef = choose([4, 9, 16]);
+        const topPow = choose([2, 3]);
+        const bottomCoefBase = choose([2, 3, 5]);
+        const bottomPow = -choose([2, 3]);
+        const exTop = { a: -randInt(1, 4), b: -randInt(2, 5), c: randInt(2, 4) };
+        const exBottom = { a: randInt(1, 4), b: randInt(2, 6), c: -randInt(1, 3) };
+        const numCoef = topCoef ** topPow;
+        const denCoef = bottomCoefBase ** Math.abs(bottomPow);
+        const resultExp = {
+          a: exTop.a * topPow - (exBottom.a * bottomPow),
+          b: exTop.b * topPow - (exBottom.b * bottomPow),
+          c: exTop.c * topPow - (exBottom.c * bottomPow)
+        };
+        const numeratorRaw = `\\left(${rawMonomialLatex(topCoef, exTop)}\\right)^{${topPow}}`;
+        const denominatorRaw = `\\left(${bottomCoefBase}^{-1}${rawMonomialLatex(1, exBottom)}\\right)^{${bottomPow}}`;
+        const expr = `\\frac{${numeratorRaw}}{${denominatorRaw}}`;
+        const correctExpr = monomialFractionLatex(numCoef, denCoef, resultExp);
+        const correct = latexWrap(correctExpr);
+        const options = buildDistractorSet(correct, [
+          latexWrap(monomialFractionLatex(numCoef * denCoef, 1, resultExp)),
+          latexWrap(monomialFractionLatex(numCoef, denCoef, { a: exTop.a + topPow - exBottom.a, b: exTop.b + topPow - exBottom.b, c: exTop.c + topPow - exBottom.c })),
+          latexWrap(monomialFractionLatex(numCoef, denCoef, { a: -resultExp.a, b: -resultExp.b, c: -resultExp.c })),
+          latexWrap(monomialFractionLatex(denCoef, numCoef, resultExp))
+        ], () => latexWrap(monomialFractionLatex(randInt(1, 24), randInt(1, 12), { a: randInt(-6, 8), b: randInt(-6, 8), c: randInt(-6, 8) })));
+
+        return {
+          topic: "Pangkat Bertingkat (LaTeX)",
+          prompt: `Sederhanakan bentuk berikut:<br>${latexWrap(expr, true)}<span class="math-note">Perhatikan bahwa pangkat di luar kurung mengalikan semua pangkat di dalam kurung.</span>`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Gunakan aturan pangkat pada hasil kali dan pangkat dari pangkat. Hasil akhirnya ${correct}.`,
+          useVisual: false
+        };
+      }
+
+      function qLatexNestedQuotientPower() {
+        const topInside = { a: -randInt(4, 7), b: -randInt(1, 3), c: randInt(1, 3) };
+        const bottomInside = { a: -randInt(6, 9), b: -randInt(1, 2), c: randInt(3, 5) };
+        const outer = -choose([2, 3, 4]);
+        const insideExp = {
+          a: topInside.a - bottomInside.a,
+          b: topInside.b - bottomInside.b,
+          c: topInside.c - bottomInside.c
+        };
+        const resultExp = { a: insideExp.a * outer, b: insideExp.b * outer, c: insideExp.c * outer };
+        const expr = `\\left(\\frac{${rawMonomialLatex(1, topInside)}}{${rawMonomialLatex(1, bottomInside)}}\\right)^{${outer}}`;
+        const correctExpr = monomialFractionLatex(1, 1, resultExp);
+        const correct = latexWrap(correctExpr);
+        const options = buildDistractorSet(correct, [
+          latexWrap(monomialFractionLatex(1, 1, insideExp)),
+          latexWrap(monomialFractionLatex(1, 1, { a: insideExp.a + outer, b: insideExp.b + outer, c: insideExp.c + outer })),
+          latexWrap(monomialFractionLatex(1, 1, { a: -resultExp.a, b: -resultExp.b, c: -resultExp.c })),
+          latexWrap(monomialFractionLatex(1, 1, { a: insideExp.a * Math.abs(outer), b: insideExp.b * Math.abs(outer), c: insideExp.c * Math.abs(outer) }))
+        ], () => latexWrap(monomialFractionLatex(1, 1, { a: randInt(-10, 10), b: randInt(-10, 10), c: randInt(-10, 10) })));
+
+        return {
+          topic: "Pecahan Berpangkat (LaTeX)",
+          prompt: `Sederhanakan bentuk pangkat berikut:<br>${latexWrap(expr, true)}<span class="math-note">Sederhanakan isi kurung terlebih dahulu, lalu kalikan semua pangkat dengan pangkat luar.</span>`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Setelah isi kurung disederhanakan, semua pangkat dikalikan dengan ${outer}. Hasilnya ${correct}.`,
+          useVisual: false
+        };
+      }
+
+      function qLatexMixedMonomialOperation() {
+        const firstCoef = choose([2, 3, 4, 5]);
+        const firstPow = choose([2, 3]);
+        const secondCoef = choose([2, 3, 4]);
+        const denominatorCoef = choose([4, 6, 8, 9, 12]);
+        const e1 = { m: -randInt(1, 3), n: randInt(2, 4) };
+        const e2 = { m: randInt(2, 5), n: -randInt(1, 3) };
+        const e3 = { m: -randInt(1, 2), n: randInt(3, 5) };
+        const resultCoefNum = (firstCoef ** firstPow) * secondCoef;
+        const resultCoefDen = denominatorCoef;
+        const resultExp = {
+          m: e1.m * firstPow + e2.m - e3.m,
+          n: e1.n * firstPow + e2.n - e3.n
+        };
+        const expr = `\\frac{\\left(${rawMonomialLatex(firstCoef, e1)}\\right)^{${firstPow}} \\cdot ${rawMonomialLatex(secondCoef, e2)}}{${rawMonomialLatex(denominatorCoef, e3)}}`;
+        const correctExpr = monomialFractionLatex(resultCoefNum, resultCoefDen, resultExp);
+        const correct = latexWrap(correctExpr);
+        const options = buildDistractorSet(correct, [
+          latexWrap(monomialFractionLatex(resultCoefNum + resultCoefDen, 1, resultExp)),
+          latexWrap(monomialFractionLatex(resultCoefNum, resultCoefDen, { m: e1.m * firstPow - e2.m - e3.m, n: e1.n * firstPow - e2.n - e3.n })),
+          latexWrap(monomialFractionLatex(resultCoefNum, resultCoefDen, { m: -resultExp.m, n: -resultExp.n })),
+          latexWrap(monomialFractionLatex(resultCoefDen, resultCoefNum, resultExp))
+        ], () => latexWrap(monomialFractionLatex(randInt(1, 20), randInt(1, 12), { m: randInt(-8, 10), n: randInt(-8, 10) })));
+
+        return {
+          topic: "Operasi Campuran Monomial (LaTeX)",
+          prompt: `Sederhanakan bentuk pangkat campuran berikut:<br>${latexWrap(expr, true)}<span class="math-note">Soal ini menggabungkan pangkat luar, perkalian, dan pembagian bentuk berpangkat.</span>`,
+          options,
+          answerIndex: options.indexOf(correct),
+          explanation: `Sederhanakan pangkat luar terlebih dahulu, lalu jumlahkan dan kurangkan pangkat sejenis. Hasilnya ${correct}.`,
+          useVisual: false
+        };
+      }
+
+      function nonZero(min, max) {
+        let n = 0;
+        while (n === 0) n = randInt(min, max);
+        return n;
+      }
+
+      function renderCoordinateVisual(visual) {
+        const size = 320;
+        const min = -7, max = 7;
+        const step = size / (max - min);
+        const sx = x => (x - min) * step;
+        const sy = y => size - (y - min) * step;
+
+        let grid = "";
+        for (let i = min; i <= max; i++) {
+          const pos = sx(i);
+          const posY = sy(i);
+          grid += `<line x1="${pos}" y1="0" x2="${pos}" y2="${size}" stroke="${i === 0 ? "#65708a" : "#e4e9f2"}" stroke-width="${i === 0 ? 2 : 1}" />`;
+          grid += `<line x1="0" y1="${posY}" x2="${size}" y2="${posY}" stroke="${i === 0 ? "#65708a" : "#e4e9f2"}" stroke-width="${i === 0 ? 2 : 1}" />`;
+          if (i !== 0 && i % 2 === 0) {
+            grid += `<text x="${pos + 3}" y="${sy(0) - 4}" font-size="9" fill="#7b8498">${i}</text>`;
+            grid += `<text x="${sx(0) + 4}" y="${posY - 3}" font-size="9" fill="#7b8498">${i}</text>`;
+          }
+        }
+
+        let specialLine = "";
+        if (visual.line) {
+          if (visual.line.type === "vertical") {
+            const x = sx(visual.line.value);
+            specialLine = `<line x1="${x}" y1="0" x2="${x}" y2="${size}" stroke="#d92d20" stroke-width="3" stroke-dasharray="8 6" />`;
+          } else if (visual.line.type === "horizontal") {
+            const y = sy(visual.line.value);
+            specialLine = `<line x1="0" y1="${y}" x2="${size}" y2="${y}" stroke="#d92d20" stroke-width="3" stroke-dasharray="8 6" />`;
+          } else if (visual.line.type === "diag" && visual.line.value === 1) {
+            specialLine = `<line x1="${sx(min)}" y1="${sy(min)}" x2="${sx(max)}" y2="${sy(max)}" stroke="#d92d20" stroke-width="3" stroke-dasharray="8 6" />`;
+          } else {
+            specialLine = `<line x1="${sx(min)}" y1="${sy(max)}" x2="${sx(max)}" y2="${sy(min)}" stroke="#d92d20" stroke-width="3" stroke-dasharray="8 6" />`;
+          }
+        }
+
+        const equationLines = (visual.equationLines || []).map((line, index) => {
+          const x1 = min;
+          const x2 = max;
+          const y1 = (line.m * x1) + line.b;
+          const y2 = (line.m * x2) + line.b;
+          const stroke = index === 0 ? "#315efb" : "#16884a";
+
+          return `<line
+            x1="${sx(x1)}"
+            y1="${sy(y1)}"
+            x2="${sx(x2)}"
+            y2="${sy(y2)}"
+            stroke="${stroke}"
+            stroke-width="3"
+          />`;
+        }).join("");
+
+        let arrow = "";
+        if (visual.arrow) {
+          arrow = `
+            <defs>
+              <marker id="arrowHead" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L7,3 z" fill="#315efb"></path>
+              </marker>
+            </defs>
+            <line x1="${sx(visual.arrow.x1)}" y1="${sy(visual.arrow.y1)}"
+                  x2="${sx(visual.arrow.x2)}" y2="${sy(visual.arrow.y2)}"
+                  stroke="#315efb" stroke-width="3" marker-end="url(#arrowHead)" />
+          `;
+        }
+
+        const points = (visual.points || []).map((p, index) => {
+          const fill = p.ghost ? "#f59e0b" : (index === 0 ? "#315efb" : "#16884a");
+          return `
+            <circle cx="${sx(p.x)}" cy="${sy(p.y)}" r="6" fill="${fill}" stroke="#fff" stroke-width="2" />
+            <text x="${sx(p.x) + 8}" y="${sy(p.y) - 8}" font-size="12" font-weight="800" fill="#172033">${p.label}${visual.showPointCoordinates === false ? "" : coord(p.x, p.y)}</text>
+          `;
+        }).join("");
+
+        return `
+          <svg viewBox="0 0 ${size} ${size}" role="img" aria-label="Diagram koordinat transformasi geometri">
+            <rect width="${size}" height="${size}" rx="12" fill="#ffffff"></rect>
+            ${grid}
+            ${equationLines}
+            ${specialLine}
+            ${arrow}
+            ${points}
+            <text x="${size - 14}" y="${sy(0) - 7}" font-size="11" font-weight="800" fill="#475467">x</text>
+            <text x="${sx(0) + 7}" y="14" font-size="11" font-weight="800" fill="#475467">y</text>
+          </svg>
+        `;
+      }
+
+      el.modeCards.forEach(card => {
+        card.addEventListener("click", () => {
+          state.mode = card.dataset.mode;
+          el.modeCards.forEach(item => item.classList.toggle("active", item === card));
+          updatePlayerCountOptions();
+        });
+      });
+
+      el.playerCount.addEventListener("change", () => renderNameInputs(Number(el.playerCount.value)));
+      el.startGameBtn.addEventListener("click", startGame);
+      el.readyBtn.addEventListener("click", readyForTurn);
+      el.hideHandBtn.addEventListener("click", toggleHandVisibility);
+      el.drawCardBtn.addEventListener("click", manualDraw);
+      el.drawPileBtn.addEventListener("click", manualDraw);
+      el.unoBtn.addEventListener("click", callUno);
+      el.newGameTop.addEventListener("click", resetToSetup);
+      el.playAgainBtn.addEventListener("click", resetToSetup);
+
+      el.colorBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.currentColor = btn.dataset.color;
+          el.colorOverlay.classList.add("hidden");
+          addLog(`${state.players[state.current].name} memilih warna ${COLOR_NAMES[state.currentColor]}.`);
+          applyCardEffect(state.pendingCard);
+          state.pendingCard = null;
+        });
+      });
+
+      updatePlayerCountOptions();
+    })();
+  </script>
+</body>
+</html>
